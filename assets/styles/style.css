@@ -1,0 +1,15 @@
+@font-face {
+    font-family: 'Google Sans';
+    src: url('../fonts/OpenSans-VariableFont_wdth\,wght.ttf') format('truetype');
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #131314;
+    font-family: 'Google Sans';
+}
