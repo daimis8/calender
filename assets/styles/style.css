@@ -1,15 +1,151 @@
 @font-face {
-    font-family: 'Google Sans';
-    src: url('../fonts/OpenSans-VariableFont_wdth\,wght.ttf') format('truetype');
+    font-family: 'Product Sans';
+    src: url('../fonts/Product\ Sans\ Regular.ttf') format('truetype');
 }
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    line-height: 1;
 }
 
-body {
+html, body {
     background-color: #131314;
-    font-family: 'Google Sans';
+    font-family: 'Product Sans';
+    height: 100vh;
 }
+:root {
+    --primary-color: #E3E3E3;
+    --border-button: #8e918f;
+}
+
+.header-container {
+    width: 100%;
+    height: 64px;
+    display: flex;
+    flex-direction: row;
+    padding: 8px;
+}
+
+.icon-and-logo-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding-right: 40px;
+}
+
+.logo-text {
+    color: white;
+    font-weight: normal;
+    font-size: 36px;
+    line-height: 48px;
+    padding-left: 16px;
+}
+
+.icon-container {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.menu-icon {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    border-radius: 9999px;
+}
+
+.menu-icon-container {
+    width: 40px;
+    height: 40px;
+    border-radius: 9999px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 5px;
+}
+
+.menu-icon-container:hover {
+    background-color: rgba(227, 227, 227, 0.2);
+}
+
+.header-second-part {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.arrows-container {
+    display: flex;
+    flex-direction: row;
+    margin-right: 30px;
+}
+
+.after-logo-first-part {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.header-date-text {
+    color: var(--primary-color);
+    font-size: 28px;
+}
+
+.button-header {
+    height: 38px;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-radius: 9999px;
+    cursor: pointer;
+    background: none;
+    border: 1px solid var(--border-button);
+    margin-right: 20px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    color: var(--primary-color);
+    font-size: 14px;
+}
+
+.button-header:hover {
+    background-color: rgba(227, 227, 227, 0.2);
+}
+
+.dropdown-triangle {
+    display: flex;
+    justify-content: center;
+    margin-left: 6px;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.arrow-container {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 9999px;
+}
+
+.arrow-container:hover {
+    background-color: rgba(227, 227, 227, 0.2);
+}
+
+.arrow {
+    width: 20px;
+    height: 20px;
+    display: block;
+    object-fit: contain;
+
+}
+
