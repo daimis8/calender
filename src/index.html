@@ -1,65 +1,281 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Document</title>
-        <link rel="stylesheet" href="../assets/styles/style.css">
-    </head>
-    <body>
-        <header class="header-container">
-            <div class="icon-and-logo-container">
-                <!--ICON AND LOGO -->
-                <div class="menu-icon-container">
-                    <img src="../assets/icons/menuIcon.svg" alt="Menu icon" class="menu-icon cursor-pointer">
-                </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="../assets/styles/style.css" />
+  </head>
+  <body>
+    <header class="header-container row">
+      <div class="icon-and-logo-container row">
+        <!--ICON AND LOGO -->
+        <div class="menu-icon-container">
+          <img
+            src="../assets/icons/menuIcon.svg"
+            alt="Menu icon"
+            class="menu-icon cursor-pointer"
+          />
+        </div>
 
-                <img src="../assets/images/Logo.png" alt="Calender logo" height="30" width="34">
+        <img
+          src="../assets/images/Logo.png"
+          alt="Calender logo"
+          height="30"
+          width="34"
+        />
 
-                <p class="logo-text">Calendar</p>
-            </div>
-            
-            <div class="header-second-part">
-                <!--TODAY   < >     DATE                WEEK/MONTH-->
-                <div class="after-logo-first-part">
-                    <button class="button-header">
-                        <!--TODAY-->
-                        Today
-                    </button>
+        <p class="logo-text">Calendar</p>
+      </div>
 
-                    <div class="arrows-container">
-                        <!--ARROWS-->
-                        <div class="arrow-container">
-                            <img src="../assets/icons/arrowLeft.svg" alt="Arrow left icon" class="arrow cursor-pointer">
-                        </div>
+      <div class="header-second-part row">
+        <!--TODAY   < >     DATE                WEEK/MONTH-->
+        <div class="after-logo-first-part row">
+          <button class="button-header">
+            <!--TODAY-->
+            Today
+          </button>
 
-                        <div class="arrow-container">
-                            <img src="../assets/icons/arrowRight.svg" alt="Arrow right icon" class="arrow cursor-pointer">
-                        </div>
-                    </div>
-                    <p class="header-date-text">June 2025</p>
-                </div>
-
-                <div>
-                    <!--DROPDOWN WEEK/MONTH-->
-                    <button class="button-header">
-                        Week
-                        <img src="../assets/icons/triangleDown.svg" alt="Dropdown icon" class="dropdown-triangle">
-                    </button>
-
-                </div>
+          <div class="arrows-container row">
+            <!--ARROWS-->
+            <div class="arrow-container-big cursor-pointer">
+              <img
+                src="../assets/icons/arrowLeft.svg"
+                alt="Arrow left icon"
+                class="arrow-big"
+              />
             </div>
 
-        </header>
-        <main>
-            <aside>
-                <div>
-                    <!-- MONTH CALENDER-->
-                </div>
-            </aside>
-            <div>
-                <!--CALENDER (FOR NOW ONLY WEEK) -->
+            <div class="arrow-container-big cursor-pointer">
+              <img
+                src="../assets/icons/arrowRight.svg"
+                alt="Arrow right icon"
+                class="arrow-big"
+              />
             </div>
-        </main>
-    </body>
+          </div>
+          <p class="header-date-text">June 2025</p>
+        </div>
+
+        <button class="button-header row">
+          Week
+          <img
+            src="../assets/icons/triangleDown.svg"
+            alt="Dropdown icon"
+            class="dropdown-triangle"
+          />
+        </button>
+      </div>
+    </header>
+    <main class="main-container">
+      <aside>
+        <button class="create-button row cursor-pointer">
+          <!--    + Create  -->
+          <img src="../assets/icons/plus.svg" alt="plus icon" />
+          Create
+        </button>
+        <div>
+          <div class="small-calender-header row">
+            <!--header of calender June 2025                <   >       -->
+            June 2025
+            <div class="row">
+              <div class="arrow-container-small cursor-pointer">
+                <img
+                  src="../assets/icons/arrowLeft.svg"
+                  alt="Arrow left icon"
+                  class="arrow-small"
+                />
+              </div>
+              <div class="arrow-container-small cursor-pointer">
+                <img
+                  src="../assets/icons/arrowRight.svg"
+                  alt="Arrow right icon"
+                  class="arrow-small"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="small-calender-grid">
+            <div class="small-calender-grid-weekday">S</div>
+            <div class="small-calender-grid-weekday">M</div>
+            <div class="small-calender-grid-weekday">T</div>
+            <div class="small-calender-grid-weekday">W</div>
+            <div class="small-calender-grid-weekday">T</div>
+            <div class="small-calender-grid-weekday">F</div>
+            <div class="small-calender-grid-weekday">S</div>
+            <div class="small-calender-number-container cursor-pointer">
+              <div class="small-calender-grid-number">1</div>
+            </div>
+
+            <div class="small-calender-number-container cursor-pointer">
+              <div class="small-calender-grid-number">2</div>
+            </div>
+
+            <div class="small-calender-number-container cursor-pointer">
+              <div class="small-calender-grid-number">3</div>
+            </div>
+
+            <div class="small-calender-number-container cursor-pointer">
+              <div class="small-calender-grid-number">4</div>
+            </div>
+
+            <div class="small-calender-number-container cursor-pointer">
+              <div class="small-calender-grid-number">5</div>
+            </div>
+
+            <div class="small-calender-number-container cursor-pointer">
+              <div class="small-calender-grid-number">6</div>
+            </div>
+
+            <div class="small-calender-number-container cursor-pointer">
+              <div class="small-calender-grid-number">7</div>
+            </div>
+
+            <div class="small-calender-number-container cursor-pointer">
+              <div class="small-calender-grid-number">8</div>
+            </div>
+
+            <div class="small-calender-number-container cursor-pointer">
+              <div class="small-calender-grid-number">9</div>
+            </div>
+
+            <div class="small-calender-number-container cursor-pointer">
+              <div class="small-calender-grid-number">10</div>
+            </div>
+
+            <div class="small-calender-number-container cursor-pointer">
+              <div class="small-calender-grid-number">11</div>
+            </div>
+
+            <div class="small-calender-number-container cursor-pointer">
+              <div class="small-calender-grid-number">12</div>
+            </div>
+
+            <div class="small-calender-number-container cursor-pointer">
+              <div class="small-calender-grid-number">13</div>
+            </div>
+
+            <div class="small-calender-number-container cursor-pointer">
+              <div class="small-calender-grid-number">14</div>
+            </div>
+
+            <div class="small-calender-number-container cursor-pointer">
+              <div class="small-calender-grid-number">15</div>
+            </div>
+
+            <div class="small-calender-number-container cursor-pointer">
+              <div class="small-calender-grid-number">16</div>
+            </div>
+
+            <div class="small-calender-number-container cursor-pointer">
+              <div class="small-calender-grid-number">17</div>
+            </div>
+
+            <div class="small-calender-number-container cursor-pointer">
+              <div class="small-calender-grid-number">18</div>
+            </div>
+
+            <div class="small-calender-number-container cursor-pointer">
+              <div class="small-calender-grid-number">19</div>
+            </div>
+
+            <div class="small-calender-number-container cursor-pointer">
+              <div class="small-calender-grid-number">20</div>
+            </div>
+
+            <div class="small-calender-number-container cursor-pointer">
+              <div class="small-calender-grid-number">21</div>
+            </div>
+
+            <div class="small-calender-number-container cursor-pointer">
+              <div class="small-calender-grid-number">22</div>
+            </div>
+
+            <div class="small-calender-number-container cursor-pointer">
+              <div class="small-calender-grid-number">23</div>
+            </div>
+
+            <div class="small-calender-number-container cursor-pointer">
+              <div class="small-calender-grid-number">24</div>
+            </div>
+
+            <div class="small-calender-number-container cursor-pointer">
+              <div class="small-calender-grid-number">25</div>
+            </div>
+
+            <div class="small-calender-number-container cursor-pointer">
+              <div class="small-calender-grid-number">26</div>
+            </div>
+
+            <div class="small-calender-number-container cursor-pointer">
+              <div class="small-calender-grid-number">27</div>
+            </div>
+
+            <div class="small-calender-number-container cursor-pointer">
+              <div class="small-calender-grid-number">28</div>
+            </div>
+
+            <div class="small-calender-number-container cursor-pointer">
+              <div class="small-calender-grid-number">29</div>
+            </div>
+
+            <div class="small-calender-number-container cursor-pointer">
+              <div class="small-calender-grid-number">30</div>
+            </div>
+
+            <div class="small-calender-number-container cursor-pointer">
+              <div class="small-calender-grid-number">1</div>
+            </div>
+
+            <div class="small-calender-number-container cursor-pointer">
+              <div class="small-calender-grid-number">2</div>
+            </div>
+
+            <div class="small-calender-number-container cursor-pointer">
+              <div class="small-calender-grid-number">3</div>
+            </div>
+
+            <div class="small-calender-number-container cursor-pointer">
+              <div class="small-calender-grid-number">4</div>
+            </div>
+
+            <div class="small-calender-number-container cursor-pointer">
+              <div class="small-calender-grid-number">5</div>
+            </div>
+
+            <div class="small-calender-number-container cursor-pointer">
+              <div class="small-calender-grid-number">6</div>
+            </div>
+
+            <div class="small-calender-number-container cursor-pointer">
+              <div class="small-calender-grid-number">7</div>
+            </div>
+
+            <div class="small-calender-number-container cursor-pointer">
+              <div class="small-calender-grid-number">8</div>
+            </div>
+
+            <div class="small-calender-number-container cursor-pointer">
+              <div class="small-calender-grid-number">9</div>
+            </div>
+
+            <div class="small-calender-number-container cursor-pointer">
+              <div class="small-calender-grid-number">10</div>
+            </div>
+
+            <div class="small-calender-number-container cursor-pointer">
+              <div class="small-calender-grid-number">11</div>
+            </div>
+
+            <div class="small-calender-number-container cursor-pointer">
+              <div class="small-calender-grid-number">12</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+      <div class="big-calender">
+        <!--CALENDER (FOR NOW ONLY WEEK) -->
+      </div>
+    </main>
+  </body>
 </html>
