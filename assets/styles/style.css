@@ -22,6 +22,8 @@ html, body {
     --secondary-button: #37393B;
     --big-calender-background: #121214;
     --primary-background: #1B1B1B;
+    --big-calender-text: #C4C7C5;
+    --big-calender-event-box-border: #333537;
 }
 
 .header-container {
@@ -31,8 +33,15 @@ html, body {
 }
 
 .icon-and-logo-container {
-    align-items: center;
-    padding-right: 40px;
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .icon-and-logo-container {
+        display: flex;
+        align-items: center;
+        padding-right: 40px;
+    } 
 }
 
 .logo-text {
@@ -189,9 +198,7 @@ html, body {
     height: 100%;
 }
 
-.big-calender {
-    background-color: var(--big-calender-background);
-}
+
 
 .small-calender-header {
     color: var(--primary-color);
@@ -248,4 +255,98 @@ aside {
 
 .small-calender-number-container:hover {
     background-color: rgba(227, 227, 227, 0.2);
+}
+
+.big-calender {
+    background-color: var(--big-calender-background);
+    display: grid;
+    grid-template-columns: 60px 9px repeat(7, 1fr);
+    grid-template-rows: 84px 16px repeat(25 ,50px);
+    border-radius: 16px;
+    padding-right: 10px;
+    height: calc(100vh - 64px);
+
+    color: var(--big-calender-text);
+
+    overflow-y: auto;
+}
+
+.big-calender > :nth-child(-n+27) { /* First 27 items */
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: var(--big-calender-background);
+}
+
+/* First row (84px) */
+.big-calender > :nth-child(-n+9) {
+    top: 0;
+}
+
+/* Second row (16px) */
+.big-calender > :nth-child(n+10):nth-child(-n+18) {
+    top: 84px;
+}
+
+/* Third row (40px) */
+.big-calender > :nth-child(n+19):nth-child(-n+27) {
+    top: 100px;
+}
+
+.big-calender-date-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 16px;
+
+}
+
+.weekday-text {
+    font-size: 11px;
+}
+
+.weekday-number {
+    font-size: 26px;
+}
+
+.time-zone-text {
+    font-size: 11px;
+    margin-left: 8px;
+}
+
+.left-border {
+    border-left: 1px solid var(--big-calender-event-box-border);
+}
+
+.right-border {
+    border-right: 1px solid var(--big-calender-event-box-border);
+}
+
+.top-border {
+    border-top: 1px solid var(--big-calender-event-box-border);
+}
+
+.bottom-border {
+    border-bottom: 1px solid var(--big-calender-event-box-border);
+}
+
+.all-borders {
+    border: 1px solid var(--big-calender-event-box-border);
+}
+
+.big-calender-time-text {
+    font-size: 11px;
+    text-align: right;
+    position: relative;
+    top: -4px;
+    margin-right: 8px;
+}
+
+
+/* MODAL STYLING */
+
+.modal-container {
+    position: absolute;
+    
 }
