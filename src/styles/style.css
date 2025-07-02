@@ -1,6 +1,6 @@
 @font-face {
     font-family: 'Product Sans';
-    src: url('../fonts/Product\ Sans\ Regular.ttf') format('truetype');
+    src: url('../../assets/fonts/Product\ Sans\ Regular.ttf') format('truetype');
 }
 
 * {
@@ -43,6 +43,7 @@ html, body {
     .icon-and-logo-container {
         display: flex;
         align-items: center;
+        flex-direction: row;
         padding-right: 40px;
     } 
 }
@@ -235,7 +236,6 @@ aside {
     display: flex;
     justify-content: center;
     align-items: center;
-    color: var(--primary-color);
     font-size: 10px;
 }
 
@@ -254,6 +254,24 @@ aside {
     align-items: center;
     justify-content: center;
     border-radius: 9999px;
+}
+
+.small-calender-current-day-container {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    background-color: var(--form-button);
+}
+
+.text-black {
+    color: black;
+}
+
+.text-primary {
+    color: var(--primary-color);
 }
 
 .small-calender-number-container:hover {
@@ -301,8 +319,32 @@ aside {
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    gap: 16px;
+    gap: 5px;
 
+}
+
+.big-calender-number-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 9999px;
+}
+
+.big-calender-number-container:hover {
+    background-color: rgba(227, 227, 227, 0.2);
+}
+
+.big-calender-today-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background-color: var(--form-button);
+    border-radius: 9999px;
+    color: black;
 }
 
 .weekday-text {
