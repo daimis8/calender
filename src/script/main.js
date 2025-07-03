@@ -366,3 +366,25 @@ function updateHeaderDate() {
 
     headerDate.innerHTML = `${monthName} ${weekYear}`
 }
+
+const createEventButton = document.querySelector('.create-button');
+const modal = document.querySelector('.modal-overlay');
+const closeButton = document.querySelector('.close-icon-container');
+
+
+createEventButton.addEventListener('click', () => {
+    
+    modal.style.display = 'flex';
+    
+});
+
+closeButton.addEventListener('click', () => {
+    modal.style.display = 'none'
+});
+
+function isMobileScreen() {
+    return window.innerWidth < 768;
+}
+
+
+

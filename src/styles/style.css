@@ -391,10 +391,26 @@ aside {
 
 /* MODAL STYLING */
 
+.modal-overlay {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    overflow: auto;
+    width: 100%;
+    height: 100%;
+
+    z-index: 1000;
+    left: 0;
+    top: 0;
+}
+
 .modal-container {
-    width: 740px;
     background-color: var(--big-calender-background); 
     display: flex;
+
+    width: 50%;
+    height: 50%;
     flex-direction: column;
     border-radius: 16px;
     padding: 20px 8px 20px 8px;
