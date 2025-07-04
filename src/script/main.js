@@ -222,7 +222,7 @@ function createCalenderGrid() {
 
     const emptyDiv = document.createElement('div');
     bigCalender.appendChild(emptyDiv);
-    bigCalender.appendChild(emptyDiv.cloneNode(true));
+    bigCalender.appendChild(emptyDiv.cloneNode());
 
     bigCalenderHeader(currentWeekReference);
 
@@ -326,6 +326,80 @@ function createCalenderGrid() {
         }
     }
 
+    createOverlayGrid();
+
+}
+
+function createOverlayGrid() {
+    bigCalender.offsetHeight;
+
+    const existingOverlay = document.querySelector('.overlay-grid');
+    if (existingOverlay) {
+        existingOverlay.remove();
+    }
+
+    bigCalender.offsetHeight;
+    
+    const overlayGrid = document.createElement('div');
+    overlayGrid.className = 'overlay-grid';
+        
+    for (let row = 0; row < 96; row++) {
+        for (let col = 0; col < 7; col++) {
+            const cell = document.createElement('div');
+            cell.className = 'overlay-grid-cells';
+            
+            cell.dataset.row = row;
+            cell.dataset.col = col;
+            cell.dataset.hour = Math.floor(row / 4);
+            cell.dataset.quarter = row % 4;
+            
+            cell.onclick = handleOverlayCellClick;
+            
+            
+            overlayGrid.appendChild(cell);
+        }
+    }
+
+    bigCalender.appendChild(overlayGrid);
+    
+   
+}
+
+function handleOverlayCellClick(event) {
+    console.log(event.target);
+
+    const cell = event.target;
+    const row = parseInt(cell.dataset.row);
+    const col = parseInt(cell.dataset.col);
+    const hour = parseInt(cell.dataset.hour);
+    const quarter = parseInt(cell.dataset.quarter);
+
+    console.log('=== CLICK DEBUG ===');
+    console.log('Raw dataset values:', {
+        row: cell.dataset.row,
+        col: cell.dataset.col,
+        hour: cell.dataset.hour,
+        quarter: cell.dataset.quarter
+    });
+    console.log('Parsed values:', { row, col, hour, quarter });
+    console.log('Target element:', event.target);
+    
+    
+    const minutes = quarter * 15;
+    const timeString = `${hour.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+    
+    console.log(`Clicked on day ${col}, time ${timeString} (${hour}:${minutes < 10 ? '0' : ''}${minutes})`);
+
+    document.querySelectorAll('.overlay-grid-cells.selected').forEach(cell => {
+        cell.classList.remove('selected')
+        cell.style.gridRow = '';
+        cell.textContent = '';
+    });
+    
+    event.target.classList.add('selected');
+    event.target.style.gridRow = 'span 2'; 
+    event.target.textContent = 'New Event'; 
+
 }
 
 
@@ -373,18 +447,202 @@ const closeButton = document.querySelector('.close-icon-container');
 
 
 createEventButton.addEventListener('click', () => {
-    
     modal.style.display = 'flex';
+    initializeDateTimeSelects();
     
 });
 
 closeButton.addEventListener('click', () => {
-    modal.style.display = 'none'
+    modal.style.display = 'none';
 });
 
-function isMobileScreen() {
-    return window.innerWidth < 768;
+function formatDateForDisplay(date) {
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const months = ['January', 'February', 'March', 'April', 'May', 'June', 
+                   'July', 'August', 'September', 'October', 'November', 'December'];
+    
+    const dayName = days[date.getDay()];
+    const monthName = months[date.getMonth()];
+    const dayNumber = date.getDate();
+    
+    return `${dayName}, ${monthName} ${dayNumber}`;
+
+}
+
+function formatTimeForDisplay(date) {
+    let hours = date.getHours();
+    const minutes = date.getMinutes();
+    const ampm = hours >= 12 ? 'pm' : 'am';
+    
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    
+    const minutesStr = minutes < 10 ? '0' + minutes : minutes;
+    return `${hours}:${minutesStr}${ampm}`;
 }
 
 
+function initializeDateTimeSelects(clickedDate = null) {
+    const dateSelect = document.getElementById('eventDate');
+    const startTimeSelect = document.getElementById('eventStartTime');
+    const endTimeSelect = document.getElementById('eventEndTime');
+    
+    populateDateOptions(dateSelect);
+    
+    populateAllTimeOptions(startTimeSelect);
+    populateAllTimeOptions(endTimeSelect);
 
+    if (clickedDate) {
+        dateSelect.value = clickedDate;
+    } else {
+        const today = newDate();
+        dateSelect.value = today.toISOString().split('T')[0];
+    }
+    
+    startTimeSelect.value = '09:00';
+    endTimeSelect.value = '10:00';
+}
+
+function populateDateOptions(dateSelect) {
+    const today = new Date();
+    
+    for (let i = 0; i < 30; i++) {
+        const date = new Date(today);
+        date.setDate(today.getDate() + i);
+        
+        const option = document.createElement('option');
+        option.value = date.toISOString().split('T')[0]; 
+        option.textContent = formatDateForDisplay(date);
+        
+        dateSelect.appendChild(option);
+    }
+}
+
+function populateAllTimeOptions(timeSelect) {
+    timeSelect.innerHTML = ''; 
+   
+    for (let hour = 1; hour < 24; hour++) {
+        for (let minute = 0; minute < 60; minute += 15) {
+            const option = document.createElement('option');
+            option.value = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+            
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            const displayHour = hour % 12 || 12;
+            const displayMinutes = minute.toString().padStart(2, '0');
+            option.textContent = `${displayHour}:${displayMinutes} ${ampm}`;
+            
+            timeSelect.appendChild(option);
+        }
+    }
+}
+
+
+const saveButton = document.querySelector('.form-save-button');
+
+saveButton.addEventListener('click', () => {
+
+
+    if (validateForm()) {
+        saveEvent();
+        modal.style.display = 'none';
+
+        console.log('Form saved successfully!');
+    }
+});
+
+
+function validateForm() {
+
+    const formTitle = document.querySelector('.title');
+    const eventDate = document.getElementById('eventDate')
+    const startTime = document.getElementById('eventStartTime');
+    const endTime = document.getElementById('eventEndTime');
+
+    console.log(formTitle);
+    console.log(eventDate);
+    console.log(startTime);
+    console.log(endTime);
+
+    if (!formTitle || !formTitle.value.trim()) {
+        alert("Please fill out form title");
+        return false;
+    }
+
+    if (!eventDate || !eventDate.value) {
+        alert("Please fill in the date");
+        return false;
+    }
+
+    if (!startTime || !startTime.value) {
+        alert("Please fill in the start time");
+        return false;
+    }
+
+    if (!endTime || !endTime.value) {
+        alert("Please fill in the end time");
+        return false;
+    }
+
+    if (startTime.value >= endTime.value) {
+        alert("Start time can't be smaller than end time");
+        return false;
+    }
+
+    return true
+}
+
+function saveEventsToLocalStorage(events) {
+    localStorage.setItem('calendarEvents', JSON.stringify(events));
+}
+
+function loadEventsFromLocalStorage() {
+    const eventsJson = localStorage.getItem('calendarEvents');
+    return eventsJson ? JSON.parse(eventsJson) : [];
+}
+
+function createEventObject(title, date, startTime, endTime, description = '') {
+    return {
+        title: title,
+        date: date,
+        startTime: startTime,
+        endTime: endTime,
+        description: description
+    };
+}
+
+function saveEvent() {
+    const formTitle = document.querySelector('.title');
+    const eventDate = document.getElementById('eventDate');
+    const startTime = document.getElementById('eventStartTime');
+    const endTime = document.getElementById('eventEndTime');
+    const description = document.querySelector('.form-description');
+
+    const newEvent = createEventObject(
+        formTitle.value.trim(),
+        eventDate.value,
+        startTime.value,
+        endTime.value,
+        description.value.trim()
+    );
+
+    const existingEvents = loadEventsFromLocalStorage();
+
+
+    existingEvents.push(newEvent);
+    
+    saveEventsToLocalStorage(existingEvents);
+    
+    clearForm();
+    
+    console.log('Event saved:', newEvent);
+    console.log('All events:', existingEvents);
+}
+
+function clearForm() {
+    document.querySelector('.title').value = '';
+    document.querySelector('.form-description').value = '';
+}
+
+function getAllEvents() {
+    return loadEventsFromLocalStorage();
+}

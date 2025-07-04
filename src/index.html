@@ -105,13 +105,12 @@
             <div class="small-calender-grid-weekday">T</div>
             <div class="small-calender-grid-weekday">F</div>
             <div class="small-calender-grid-weekday">S</div>
-            
+          
           </div>
         
         </div>
       </aside>
       <div class="big-calender">
-        
 
       </div>
     </main>
@@ -127,18 +126,26 @@
         <!--FORM-->
         <form class="form-container">
             <!--TITLE-->
-            <input type="text" placeholder="Add title" class="cursor-pointer" required>
-            <!--gray line-->
-            <div class="decorative-line"></div>
+            <input type="text" placeholder="Add title" class="cursor-pointer title">
+
             <!--TIME-->
             <div class="date-choice-container">
-                <input type="date" class="cursor-pointer">
-                <input type="time" class="cursor-pointer">
-                -
-                <input type="time" class="cursor-pointer">
+                <select id="eventDate" class="cursor-pointer event-date">
+
+                </select>
+
+                <select id="eventStartTime" class="cursor-pointer event-time-selector"> 
+
+                </select>
+
+                <p class="time-from-to-symbol">-</p>
+
+                <select id="eventEndTime" class="cursor-pointer event-time-selector"> 
+
+                </select>
             </div>
             <textarea name="description" placeholder="Add description" rows="4" class="form-description cursor-pointer"></textarea>
-            <button type="submit" class="form-save-button cursor-pointer">Save</button>
+            <button type="button" class="form-save-button cursor-pointer">Save</button>
         </form>
       
       
