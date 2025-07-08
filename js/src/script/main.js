@@ -32,6 +32,85 @@ let currentMonthShowing = asideCalenderInfo.month;
 let currentYearShowing = asideCalenderInfo.year;
 
 
+const smallCalenderLeftArrow = document.querySelector('.small-calender-left-arrow');
+
+smallCalenderLeftArrow.addEventListener('click', () => {
+    const prevMonth = currentMonthShowing === 0 ? 11 : currentMonthShowing - 1;
+    const prevYear = currentMonthShowing === 0 ? currentYearShowing - 1 : currentYearShowing;
+    const calenderInfo = getCalenderInfo(prevYear, prevMonth);
+    const asideCalenderInfo = setAsideCalender(
+        calenderInfo.year,
+        calenderInfo.month,
+        calenderInfo.monthName,
+        calenderInfo.daysInMonth,
+        calenderInfo.firstDayOfWeek
+    );
+    currentYearShowing = asideCalenderInfo.year;
+    currentMonthShowing = asideCalenderInfo.month;
+    console.log(currentMonthShowing);
+    console.log(currentYearShowing)
+    
+});
+
+
+const smallCalenderRightArrow = document.querySelector('.small-calender-right-arrow');
+
+smallCalenderRightArrow.addEventListener('click', () => {
+    const upcomingMonth = currentMonthShowing === 11 ? 1 : currentMonthShowing + 1;
+    const upcomingYear = currentMonthShowing === 11 ? currentYearShowing + 1 : currentYearShowing;
+    const calenderInfo = getCalenderInfo(upcomingYear, upcomingMonth);
+    const asideCalenderInfo = setAsideCalender(
+        calenderInfo.year,
+        calenderInfo.month,
+        calenderInfo.monthName,
+        calenderInfo.daysInMonth,
+        calenderInfo.firstDayOfWeek
+    );
+    currentYearShowing = asideCalenderInfo.year;
+    currentMonthShowing = asideCalenderInfo.month;
+    
+});
+
+const bigCalender = document.querySelector('.big-calender');
+
+
+let currentWeekReference = new Date();
+
+
+createCalenderGrid();
+
+
+const headerLeftArrow = document.querySelector('.left-header-arrow');
+
+headerLeftArrow.addEventListener('click', goToPreviousWeek);
+
+
+const headerRightArrow = document.querySelector('.right-header-arrow');
+
+headerRightArrow.addEventListener('click', goToNextWeek);
+
+
+
+const createEventButton = document.querySelector('.create-button');
+const modal = document.querySelector('.modal-overlay');
+const closeButton = document.querySelector('.close-icon-container');
+
+
+createEventButton.addEventListener('click', () => {
+    modal.style.display = 'flex';
+    initializeDateTimeSelects();
+    
+});
+
+closeButton.addEventListener('click', () => {
+    modal.style.display = 'none';
+
+    document.querySelectorAll('.selected').forEach(event => {
+        event.remove();
+    });
+});
+
+
 function getCalenderInfo(year, month, day = null) {
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const firstDayOfWeek = new Date(year, month, 1).getDay();
@@ -115,46 +194,6 @@ function setAsideCalender(year, month, monthName, daysInMonth, firstDayOfWeek, c
     };
 }
 
-const smallCalenderLeftArrow = document.querySelector('.small-calender-left-arrow');
-
-smallCalenderLeftArrow.addEventListener('click', () => {
-    const prevMonth = currentMonthShowing === 0 ? 11 : currentMonthShowing - 1;
-    const prevYear = currentMonthShowing === 0 ? currentYearShowing - 1 : currentYearShowing;
-    const calenderInfo = getCalenderInfo(prevYear, prevMonth);
-    const asideCalenderInfo = setAsideCalender(
-        calenderInfo.year,
-        calenderInfo.month,
-        calenderInfo.monthName,
-        calenderInfo.daysInMonth,
-        calenderInfo.firstDayOfWeek
-    );
-    currentYearShowing = asideCalenderInfo.year;
-    currentMonthShowing = asideCalenderInfo.month;
-    console.log(currentMonthShowing);
-    console.log(currentYearShowing)
-    
-});
-
-
-const smallCalenderRightArrow = document.querySelector('.small-calender-right-arrow');
-
-smallCalenderRightArrow.addEventListener('click', () => {
-    const upcomingMonth = currentMonthShowing === 11 ? 1 : currentMonthShowing + 1;
-    const upcomingYear = currentMonthShowing === 11 ? currentYearShowing + 1 : currentYearShowing;
-    const calenderInfo = getCalenderInfo(upcomingYear, upcomingMonth);
-    const asideCalenderInfo = setAsideCalender(
-        calenderInfo.year,
-        calenderInfo.month,
-        calenderInfo.monthName,
-        calenderInfo.daysInMonth,
-        calenderInfo.firstDayOfWeek
-    );
-    currentYearShowing = asideCalenderInfo.year;
-    currentMonthShowing = asideCalenderInfo.month;
-    
-});
-
-const bigCalender = document.querySelector('.big-calender');
 
 function bigCalenderHeader(referenceDate = new Date()) {
 
@@ -212,11 +251,6 @@ function isToday(date) {
     const today = new Date();
     return date.toDateString() === today.toDateString();
 }
-
-let currentWeekReference = new Date();
-
-
-createCalenderGrid();
 
 function createCalenderGrid() {
 
@@ -405,17 +439,6 @@ function openModalWithDateTime(date, hour, minutes) {
     console.log(`Modal opened with date: ${dateString}, start time: ${timeString}, end time: ${endTimeString}`);
 }
 
-
-
-const headerLeftArrow = document.querySelector('.left-header-arrow');
-
-headerLeftArrow.addEventListener('click', goToPreviousWeek);
-
-
-const headerRightArrow = document.querySelector('.right-header-arrow');
-
-headerRightArrow.addEventListener('click', goToNextWeek);
-
 function goToPreviousWeek() {
     currentWeekReference.setDate(currentWeekReference.getDate() - 7);
 
@@ -444,25 +467,6 @@ function updateHeaderDate() {
 
     headerDate.innerHTML = `${monthName} ${weekYear}`
 }
-
-const createEventButton = document.querySelector('.create-button');
-const modal = document.querySelector('.modal-overlay');
-const closeButton = document.querySelector('.close-icon-container');
-
-
-createEventButton.addEventListener('click', () => {
-    modal.style.display = 'flex';
-    initializeDateTimeSelects();
-    
-});
-
-closeButton.addEventListener('click', () => {
-    modal.style.display = 'none';
-
-    document.querySelectorAll('.selected').forEach(event => {
-        event.remove();
-    });
-});
 
 function formatDateForDisplay(date) {
     const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
