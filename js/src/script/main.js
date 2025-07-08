@@ -331,76 +331,80 @@ function createCalenderGrid() {
 }
 
 function createOverlayGrid() {
-    bigCalender.offsetHeight;
-
-    const existingOverlay = document.querySelector('.overlay-grid');
+    
+    const existingOverlay = document.querySelector('.overlay');
     if (existingOverlay) {
         existingOverlay.remove();
     }
-
-    bigCalender.offsetHeight;
     
     const overlayGrid = document.createElement('div');
-    overlayGrid.className = 'overlay-grid';
+    overlayGrid.className = 'overlay';
         
-    for (let row = 0; row < 96; row++) {
-        for (let col = 0; col < 7; col++) {
-            const cell = document.createElement('div');
-            cell.className = 'overlay-grid-cells';
-            
-            cell.dataset.row = row;
-            cell.dataset.col = col;
-            cell.dataset.hour = Math.floor(row / 4);
-            cell.dataset.quarter = row % 4;
-            
-            cell.onclick = handleOverlayCellClick;
-            
-            
-            overlayGrid.appendChild(cell);
-        }
-    }
-
+    overlayGrid.addEventListener('click', handleCalendarClick);
+    
     bigCalender.appendChild(overlayGrid);
+
+    displayEventsOnCalendar();
+
     
-   
 }
 
-function handleOverlayCellClick(event) {
-    console.log(event.target);
+function handleCalendarClick(event) {
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
 
-    const cell = event.target;
-    const row = parseInt(cell.dataset.row);
-    const col = parseInt(cell.dataset.col);
-    const hour = parseInt(cell.dataset.hour);
-    const quarter = parseInt(cell.dataset.quarter);
+    const dayWidth = rect.width / 7;
+    const dayCol = Math.floor(x / dayWidth);
 
-    console.log('=== CLICK DEBUG ===');
-    console.log('Raw dataset values:', {
-        row: cell.dataset.row,
-        col: cell.dataset.col,
-        hour: cell.dataset.hour,
-        quarter: cell.dataset.quarter
-    });
-    console.log('Parsed values:', { row, col, hour, quarter });
-    console.log('Target element:', event.target);
-    
-    
+    const hourHeight = rect.height / 24;
+    const hour = Math.floor(y / hourHeight);
+    const quarterHeight = hourHeight / 4;
+    const quarter = Math.floor((y % hourHeight) / quarterHeight);
     const minutes = quarter * 15;
-    const timeString = `${hour.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
     
-    console.log(`Clicked on day ${col}, time ${timeString} (${hour}:${minutes < 10 ? '0' : ''}${minutes})`);
+    console.log(`Clicked: Day ${dayCol}, Time ${hour}:${minutes.toString().padStart(2, '0')}`);
 
-    document.querySelectorAll('.overlay-grid-cells.selected').forEach(cell => {
-        cell.classList.remove('selected')
-        cell.style.gridRow = '';
-        cell.textContent = '';
-    });
+    createEventAtPosition(x, y, dayCol, hour, minutes);
+
+    const clickedDate = getDateFromDayColumn(dayCol);
+
+    openModalWithDateTime(clickedDate, hour, minutes);
+
     
-    event.target.classList.add('selected');
-    event.target.style.gridRow = 'span 2'; 
-    event.target.textContent = 'New Event'; 
-
 }
+
+function getDateFromDayColumn(dayCol) {
+    const startOfWeek = getStartOfWeek(currentWeekReference);
+    const targetDate = new Date(startOfWeek);
+    targetDate.setDate(startOfWeek.getDate() + dayCol);
+    return targetDate;
+}
+
+function openModalWithDateTime(date, hour, minutes) {
+    modal.style.display = 'flex';
+    
+    const dateString = date.toISOString().split('T')[0];
+
+    initializeDateTimeSelects(dateString);
+    
+    const dateSelect = document.getElementById('eventDate');
+    dateSelect.value = dateString;
+    
+    const startTimeSelect = document.getElementById('eventStartTime');
+    const timeString = `${hour.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+    startTimeSelect.value = timeString;
+    
+    const endMinutes = minutes + 30;
+    const endHour = endMinutes >= 60 ? hour + 1 : hour;
+    const finalEndMinutes = endMinutes >= 60 ? endMinutes - 60 : endMinutes;
+    const endTimeString = `${endHour.toString().padStart(2, '0')}:${finalEndMinutes.toString().padStart(2, '0')}`;
+    const endTimeSelect = document.getElementById('eventEndTime');
+    endTimeSelect.value = endTimeString;
+    
+    console.log(`Modal opened with date: ${dateString}, start time: ${timeString}, end time: ${endTimeString}`);
+}
+
 
 
 const headerLeftArrow = document.querySelector('.left-header-arrow');
@@ -454,6 +458,10 @@ createEventButton.addEventListener('click', () => {
 
 closeButton.addEventListener('click', () => {
     modal.style.display = 'none';
+
+    document.querySelectorAll('.selected').forEach(event => {
+        event.remove();
+    });
 });
 
 function formatDateForDisplay(date) {
@@ -469,25 +477,13 @@ function formatDateForDisplay(date) {
 
 }
 
-function formatTimeForDisplay(date) {
-    let hours = date.getHours();
-    const minutes = date.getMinutes();
-    const ampm = hours >= 12 ? 'pm' : 'am';
-    
-    hours = hours % 12;
-    hours = hours ? hours : 12;
-    
-    const minutesStr = minutes < 10 ? '0' + minutes : minutes;
-    return `${hours}:${minutesStr}${ampm}`;
-}
-
 
 function initializeDateTimeSelects(clickedDate = null) {
     const dateSelect = document.getElementById('eventDate');
     const startTimeSelect = document.getElementById('eventStartTime');
     const endTimeSelect = document.getElementById('eventEndTime');
     
-    populateDateOptions(dateSelect);
+    populateDateOptions(dateSelect, clickedDate);
     
     populateAllTimeOptions(startTimeSelect);
     populateAllTimeOptions(endTimeSelect);
@@ -495,7 +491,7 @@ function initializeDateTimeSelects(clickedDate = null) {
     if (clickedDate) {
         dateSelect.value = clickedDate;
     } else {
-        const today = newDate();
+        const today = new Date();
         dateSelect.value = today.toISOString().split('T')[0];
     }
     
@@ -503,11 +499,22 @@ function initializeDateTimeSelects(clickedDate = null) {
     endTimeSelect.value = '10:00';
 }
 
-function populateDateOptions(dateSelect) {
+function populateDateOptions(dateSelect, targetDateString = null) {
+    dateSelect.innerHTML = '';
+
     const today = new Date();
+    let startDate = new Date(today);
+
+    if (targetDateString) {
+        const targetDate = new Date(targetDateString);
+        if (targetDate < today) {
+            startDate = new Date(targetDate);
+            startDate.setDate(targetDate.getDate() - 7);
+        }
+    }
     
-    for (let i = 0; i < 30; i++) {
-        const date = new Date(today);
+    for (let i = 0; i < 60; i++) {
+        const date = new Date(startDate);
         date.setDate(today.getDate() + i);
         
         const option = document.createElement('option');
@@ -521,13 +528,29 @@ function populateDateOptions(dateSelect) {
 function populateAllTimeOptions(timeSelect) {
     timeSelect.innerHTML = ''; 
    
-    for (let hour = 1; hour < 24; hour++) {
+    for (let hour = 0; hour < 24; hour++) {
         for (let minute = 0; minute < 60; minute += 15) {
             const option = document.createElement('option');
             option.value = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
             
-            const ampm = hour >= 12 ? 'PM' : 'AM';
-            const displayHour = hour % 12 || 12;
+            
+            let displayHour;
+            let ampm;
+            
+            if (hour === 0) {
+                displayHour = 12;
+                ampm = 'AM';
+            } else if (hour < 12) {
+                displayHour = hour;
+                ampm = 'AM';
+            } else if (hour === 12) {
+                displayHour = 12;
+                ampm = 'PM';
+            } else {
+                displayHour = hour - 12;
+                ampm = 'PM';
+            }
+            
             const displayMinutes = minute.toString().padStart(2, '0');
             option.textContent = `${displayHour}:${displayMinutes} ${ampm}`;
             
@@ -540,13 +563,13 @@ function populateAllTimeOptions(timeSelect) {
 const saveButton = document.querySelector('.form-save-button');
 
 saveButton.addEventListener('click', () => {
-
-
     if (validateForm()) {
         saveEvent();
         modal.style.display = 'none';
 
-        console.log('Form saved successfully!');
+        document.querySelectorAll('.selected').forEach(event => {
+            event.remove();
+        });
     }
 });
 
@@ -557,11 +580,6 @@ function validateForm() {
     const eventDate = document.getElementById('eventDate')
     const startTime = document.getElementById('eventStartTime');
     const endTime = document.getElementById('eventEndTime');
-
-    console.log(formTitle);
-    console.log(eventDate);
-    console.log(startTime);
-    console.log(endTime);
 
     if (!formTitle || !formTitle.value.trim()) {
         alert("Please fill out form title");
@@ -633,6 +651,8 @@ function saveEvent() {
     saveEventsToLocalStorage(existingEvents);
     
     clearForm();
+
+    displayEventsOnCalendar();
     
     console.log('Event saved:', newEvent);
     console.log('All events:', existingEvents);
@@ -645,4 +665,108 @@ function clearForm() {
 
 function getAllEvents() {
     return loadEventsFromLocalStorage();
+}
+
+function createEventAtPosition(x, y, dayCol, hour, minutes) {
+
+    document.querySelectorAll('.selected').forEach(event => {
+        event.remove();
+    });
+    
+    const event = document.createElement('div');
+    event.className = 'selected';
+    event.textContent = 'New Event';
+    
+    const rect = document.querySelector('.overlay').getBoundingClientRect();
+    const dayWidth = rect.width / 7;
+    const hourHeight = rect.height / 24;
+    
+    event.style.position = 'absolute';
+    event.style.left = `${dayCol * dayWidth}px`;
+    event.style.top = `${(hour + minutes/60) * hourHeight}px`;
+    event.style.width = `${dayWidth - 30}px`;
+    event.style.height = `${hourHeight / 2}px`;
+    
+    document.querySelector('.overlay').appendChild(event);
+}
+
+function getWeekDateRange(referenceDate) {
+    const startOfWeek = getStartOfWeek(referenceDate);
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    
+    return {
+        start: startOfWeek,
+        end: endOfWeek
+    };
+}
+
+function getEventsForCurrentWeek() {
+    const allEvents = loadEventsFromLocalStorage();
+    const weekRange = getWeekDateRange(currentWeekReference);
+    
+    return allEvents.filter(event => {
+        const eventDate = new Date(event.date);
+        return eventDate >= weekRange.start && eventDate <= weekRange.end;
+    });
+}
+
+function getDayColumnFromDate(date) {
+    const startOfWeek = getStartOfWeek(currentWeekReference);
+    const normalizedEventDate = new Date(date);
+    normalizedEventDate.setHours(0, 0, 0, 0);
+    
+    const normalizedStartOfWeek = new Date(startOfWeek);
+    normalizedStartOfWeek.setHours(0, 0, 0, 0);
+    
+    const daysDiff = Math.floor((normalizedEventDate - normalizedStartOfWeek) / (1000 * 60 * 60 * 24));
+    return daysDiff;
+}
+
+function timeStringToPosition(timeString) {
+    const [hours, minutes] = timeString.split(':').map(Number);
+    return hours + (minutes / 60);
+}
+
+function displayEventsOnCalendar() {
+    
+    document.querySelectorAll('.calendar-event').forEach(event => {
+        event.remove();
+    });
+    
+    const weekEvents = getEventsForCurrentWeek();
+    const overlay = document.querySelector('.overlay');
+    
+    if (!overlay) return;
+    
+    const rect = overlay.getBoundingClientRect();
+    const dayWidth = rect.width / 7;
+    const hourHeight = rect.height / 24;
+    
+    weekEvents.forEach(event => {
+        const eventDate = new Date(event.date);
+        const dayCol = getDayColumnFromDate(eventDate);
+        
+        if (dayCol < 0 || dayCol > 6) return;
+        
+        const startPosition = timeStringToPosition(event.startTime);
+        const endPosition = timeStringToPosition(event.endTime);
+        const duration = endPosition - startPosition;
+        
+        const eventElement = document.createElement('div');
+        eventElement.className = 'calendar-event';
+        eventElement.textContent = event.title;
+        
+        eventElement.style.left = `${dayCol * dayWidth + 5}px`;
+        eventElement.style.top = `${startPosition * hourHeight}px`;
+        eventElement.style.width = `${dayWidth - 10}px`;
+        eventElement.style.height = `${duration * hourHeight - 2}px`;
+        
+        eventElement.addEventListener('click', (e) => {
+            e.stopPropagation();
+           //TO-DO : Event details later
+        });
+        
+        overlay.appendChild(eventElement);
+    });
 }

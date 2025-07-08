@@ -294,12 +294,10 @@ aside {
     overflow-y: auto;
 }
 
-.overlay-grid {
+.overlay {
     position: absolute;
-    display: grid;
-    grid-template-columns: repeat(7, 225px);
-    grid-template-rows: repeat(96, 12.5px); 
-    
+
+    border: solid 1px blue;
     top: 150px;
     left: 69px;
     
@@ -310,24 +308,27 @@ aside {
     z-index: 15; 
 }
 
-.overlay-grid-cells {
-    border-radius: 8px;
-    width: 90%;
-    height: 100%;
-    z-index: 25;
-    border: 1px orange solid;
 
-    display: flex;
-    align-items: center;
-    padding-left: 10px;
-    font-size: 10px;
-
-}
-
-.overlay-grid-cells.selected {
+.selected {
     background-color: var(--big-calender-background);
     border: 1px solid var(--event-border-and-text);
     color: var(--event-border-and-text);
+    padding: 4px;
+    font-size: 10px;
+    border-radius: 4px;
+    z-index: 15px;
+}
+
+.calendar-event {
+    position: absolute;
+    border-radius: 6px;
+    color: orange;
+    border: 1px orange solid;
+    padding: 4px;
+    font-size: 10px;
+    overflow: hidden;
+    cursor: pointer;
+    z-index: 15;
 
 }
 
