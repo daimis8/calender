@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "build": "tsc",
+    "check": "tsc --noEmit",
+    "watch": "tsc --watch"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
+}
