@@ -6,7 +6,38 @@ interface CalenderInfo {
     firstDayOfWeek: number;
     day: number | null;
 }
-declare const months: string[];
+declare enum DayOfTheWeek {
+    SUN = "SUN",
+    MON = "MON",
+    TUE = "TUE",
+    WED = "WED",
+    THU = "THU",
+    FRI = "FRI",
+    SAT = "SAT"
+}
+declare enum MonthName {
+    JAN = "January",
+    FEB = "February",
+    MAR = "March",
+    APR = "April",
+    MAY = "May",
+    JUN = "June",
+    JUL = "July",
+    AUG = "August",
+    SEP = "September",
+    OCT = "October",
+    NOV = "November",
+    DEC = "December"
+}
+declare enum DayName {
+    SUNDAY = "Sunday",
+    MONDAY = "Monday",
+    TUESDAY = "Tuesday",
+    WEDNESDAY = "Wednesday",
+    THURSDAY = "Thursday",
+    FRIDAY = "Friday",
+    SATURDAY = "Saturday"
+}
 declare const now: Date;
 declare const currentMonth: number;
 declare const currentYear: number;

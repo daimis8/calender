@@ -1,8 +1,40 @@
 "use strict";
-const months = [
-    'January', 'February', 'March', 'April', 'May', 'June', 'July',
-    'August', 'September', 'October', 'November', 'December'
-];
+var DayOfTheWeek;
+(function (DayOfTheWeek) {
+    DayOfTheWeek["SUN"] = "SUN";
+    DayOfTheWeek["MON"] = "MON";
+    DayOfTheWeek["TUE"] = "TUE";
+    DayOfTheWeek["WED"] = "WED";
+    DayOfTheWeek["THU"] = "THU";
+    DayOfTheWeek["FRI"] = "FRI";
+    DayOfTheWeek["SAT"] = "SAT";
+})(DayOfTheWeek || (DayOfTheWeek = {}));
+;
+var MonthName;
+(function (MonthName) {
+    MonthName["JAN"] = "January";
+    MonthName["FEB"] = "February";
+    MonthName["MAR"] = "March";
+    MonthName["APR"] = "April";
+    MonthName["MAY"] = "May";
+    MonthName["JUN"] = "June";
+    MonthName["JUL"] = "July";
+    MonthName["AUG"] = "August";
+    MonthName["SEP"] = "September";
+    MonthName["OCT"] = "October";
+    MonthName["NOV"] = "November";
+    MonthName["DEC"] = "December";
+})(MonthName || (MonthName = {}));
+var DayName;
+(function (DayName) {
+    DayName["SUNDAY"] = "Sunday";
+    DayName["MONDAY"] = "Monday";
+    DayName["TUESDAY"] = "Tuesday";
+    DayName["WEDNESDAY"] = "Wednesday";
+    DayName["THURSDAY"] = "Thursday";
+    DayName["FRIDAY"] = "Friday";
+    DayName["SATURDAY"] = "Saturday";
+})(DayName || (DayName = {}));
 const now = new Date();
 const currentMonth = now.getMonth();
 const currentYear = now.getFullYear();
@@ -74,7 +106,7 @@ function getCalenderInfo(year, month, day) {
     return {
         year,
         month,
-        monthName: months[month],
+        monthName: Object.values(MonthName)[month],
         daysInMonth,
         firstDayOfWeek,
         day: day || null
@@ -146,7 +178,15 @@ function setAsideCalender(year, month, monthName, daysInMonth, firstDayOfWeek, c
     };
 }
 function bigCalenderHeader(referenceDate = new Date()) {
-    const daysOfTheWeekArray = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+    const daysOfTheWeekArray = [
+        DayOfTheWeek.SUN,
+        DayOfTheWeek.MON,
+        DayOfTheWeek.TUE,
+        DayOfTheWeek.WED,
+        DayOfTheWeek.THU,
+        DayOfTheWeek.FRI,
+        DayOfTheWeek.SAT
+    ];
     const startOfWeek = getStartOfWeek(referenceDate);
     const existingDates = document.querySelectorAll('.big-calender-date-container');
     existingDates.forEach(date => date.remove());
@@ -396,7 +436,7 @@ function updateHeaderDate() {
     const headerDate = document.querySelector('.header-date-text');
     const weekMonth = currentWeekReference.getMonth();
     const weekYear = currentWeekReference.getFullYear();
-    const monthName = months[weekMonth];
+    const monthName = Object.values(MonthName)[weekMonth];
     if (headerDate) {
         headerDate.innerHTML = `${monthName} ${weekYear}`;
     }
@@ -406,11 +446,9 @@ function updateHeaderDate() {
     }
 }
 function formatDateForDisplay(date) {
-    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    const months = ['January', 'February', 'March', 'April', 'May', 'June',
-        'July', 'August', 'September', 'October', 'November', 'December'];
-    const dayName = days[date.getDay()];
-    const monthName = months[date.getMonth()];
+    const dayName = Object.values(DayName)[date.getDay()];
+    const monthName = Object.values(MonthName)[date.getMonth()];
+    ;
     const dayNumber = date.getDate();
     return `${dayName}, ${monthName} ${dayNumber}`;
 }

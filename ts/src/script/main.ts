@@ -7,11 +7,40 @@ interface CalenderInfo {
     day: number | null;
 }
 
+enum DayOfTheWeek {
+    SUN = 'SUN',
+    MON = 'MON',
+    TUE ='TUE',
+    WED ='WED',
+    THU = 'THU',
+    FRI = 'FRI',
+    SAT = 'SAT'
+};
 
-const months: string[] = [
-    'January', 'February', 'March', 'April', 'May', 'June', 'July',
-    'August', 'September', 'October', 'November', 'December'
-]
+enum MonthName {
+    JAN = 'January',
+    FEB = 'February',
+    MAR = 'March',
+    APR = 'April',
+    MAY = 'May',
+    JUN = 'June',
+    JUL = 'July',
+    AUG = 'August',
+    SEP = 'September',
+    OCT = 'October',
+    NOV = 'November',
+    DEC = 'December',
+}
+
+enum DayName {
+    SUNDAY = 'Sunday',
+    MONDAY = 'Monday',
+    TUESDAY = 'Tuesday',
+    WEDNESDAY = 'Wednesday',
+    THURSDAY = 'Thursday',
+    FRIDAY = 'Friday',
+    SATURDAY = 'Saturday'
+}
 
 const now = new Date();
 const currentMonth = now.getMonth();
@@ -138,7 +167,7 @@ function getCalenderInfo(year: number, month: number, day?: number) : CalenderIn
     return {
         year,
         month,
-        monthName: months[month],
+        monthName: Object.values(MonthName)[month],
         daysInMonth,
         firstDayOfWeek,
         day: day || null
@@ -227,7 +256,15 @@ function setAsideCalender(year : number, month: number, monthName : string, days
 
 function bigCalenderHeader(referenceDate: Date = new Date()) {
 
-    const daysOfTheWeekArray = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+    const daysOfTheWeekArray = [
+        DayOfTheWeek.SUN,
+        DayOfTheWeek.MON,
+        DayOfTheWeek.TUE,
+        DayOfTheWeek.WED,
+        DayOfTheWeek.THU,
+        DayOfTheWeek.FRI,
+        DayOfTheWeek.SAT
+    ];
 
     const startOfWeek = getStartOfWeek(referenceDate)
 
@@ -552,7 +589,7 @@ function updateHeaderDate() {
     const headerDate = document.querySelector('.header-date-text');
     const weekMonth = currentWeekReference.getMonth();
     const weekYear = currentWeekReference.getFullYear();
-    const monthName = months[weekMonth];
+    const monthName = Object.values(MonthName)[weekMonth];
 
     if (headerDate) {
         headerDate.innerHTML = `${monthName} ${weekYear}`
@@ -565,12 +602,8 @@ function updateHeaderDate() {
 }
 
 function formatDateForDisplay(date: Date) {
-    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    const months = ['January', 'February', 'March', 'April', 'May', 'June', 
-                   'July', 'August', 'September', 'October', 'November', 'December'];
-    
-    const dayName = days[date.getDay()];
-    const monthName = months[date.getMonth()];
+    const dayName = Object.values(DayName)[date.getDay()];
+    const monthName = Object.values(MonthName)[date.getMonth()];;
     const dayNumber = date.getDate();
     
     return `${dayName}, ${monthName} ${dayNumber}`;
