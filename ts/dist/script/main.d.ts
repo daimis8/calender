@@ -1,3 +1,11 @@
+interface EventInfo {
+    id?: number;
+    title: string;
+    date: string;
+    startTime: string;
+    endTime: string;
+    description?: string;
+}
 interface CalenderInfo {
     year: number;
     month: number;
@@ -38,6 +46,7 @@ declare enum DayName {
     FRIDAY = "Friday",
     SATURDAY = "Saturday"
 }
+declare const API_BASE_URL = "http://localhost:3001";
 declare const now: Date;
 declare const currentMonth: number;
 declare const currentYear: number;
@@ -68,12 +77,12 @@ declare function bigCalenderHeader(referenceDate?: Date): void;
 declare function getStartOfWeek(date: Date): Date;
 declare function isToday(date: Date): boolean;
 declare function createCalenderGrid(): void;
-declare function createOverlayGrid(): void;
+declare function createOverlayGrid(): Promise<void>;
 declare function handleCalendarClick(event: MouseEvent): void;
 declare function getDateFromDayColumn(dayCol: number): Date;
 declare function openModalWithDateTime(date: Date, hour: number, minutes: number): void;
-declare function goToPreviousWeek(): void;
-declare function goToNextWeek(): void;
+declare function goToPreviousWeek(): Promise<void>;
+declare function goToNextWeek(): Promise<void>;
 declare function updateHeaderDate(): void;
 declare function formatDateForDisplay(date: Date): string;
 declare function initializeDateTimeSelects(clickedDate?: string): void;
@@ -81,25 +90,20 @@ declare function populateDateOptions(dateSelect: HTMLSelectElement, targetDateSt
 declare function populateAllTimeOptions(timeSelect: HTMLSelectElement): void;
 declare const saveButton: Element | null;
 declare function validateForm(): boolean;
-declare function saveEventsToLocalStorage(events: EventInfo[]): void;
-declare function loadEventsFromLocalStorage(): any;
-interface EventInfo {
-    title: string;
-    date: string;
-    startTime: string;
-    endTime: string;
-    description?: string;
-}
+declare function getAllEventsFromAPI(): Promise<EventInfo[]>;
+declare function saveEventToAPI(event: EventInfo): Promise<EventInfo | null>;
+declare function updateEventInAPI(id: number, event: EventInfo): Promise<EventInfo | null>;
+declare function deleteEventFromAPI(id: number): Promise<boolean>;
 declare function createEventObject(title: string, date: string, startTime: string, endTime: string, description?: string): EventInfo;
-declare function saveEvent(): void;
+declare function saveEvent(): Promise<void>;
 declare function clearForm(): void;
-declare function getAllEvents(): any;
-declare function createEventAtPosition(x: number, y: number, dayCol: number, hour: number, minutes: number): void;
+declare function getAllEvents(): Promise<EventInfo[]>;
+declare function createEventAtPosition(dayCol: number, hour: number, minutes: number): void;
 declare function getWeekDateRange(referenceDate: Date): {
     start: Date;
     end: Date;
 };
-declare function getEventsForCurrentWeek(): any;
+declare function getEventsForCurrentWeek(): Promise<EventInfo[]>;
 declare function getDayColumnFromDate(date: Date): number;
 declare function timeStringToPosition(timeString: string): number;
-declare function displayEventsOnCalendar(): void;
+declare function displayEventsOnCalendar(): Promise<void>;

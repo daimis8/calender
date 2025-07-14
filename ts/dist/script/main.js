@@ -35,6 +35,7 @@ var DayName;
     DayName["FRIDAY"] = "Friday";
     DayName["SATURDAY"] = "Saturday";
 })(DayName || (DayName = {}));
+const API_BASE_URL = 'http://localhost:3001';
 const now = new Date();
 const currentMonth = now.getMonth();
 const currentYear = now.getFullYear();
@@ -327,7 +328,7 @@ function createCalenderGrid() {
     }
     createOverlayGrid();
 }
-function createOverlayGrid() {
+async function createOverlayGrid() {
     const bigCalender = document.querySelector('.big-calender');
     if (bigCalender) {
     }
@@ -343,7 +344,7 @@ function createOverlayGrid() {
     overlayGrid.className = 'overlay';
     overlayGrid.addEventListener('click', handleCalendarClick);
     bigCalender.appendChild(overlayGrid);
-    displayEventsOnCalendar();
+    await displayEventsOnCalendar();
 }
 function handleCalendarClick(event) {
     if (!event.currentTarget || !(event.currentTarget instanceof HTMLElement)) {
@@ -360,7 +361,7 @@ function handleCalendarClick(event) {
     const quarter = Math.floor((y % hourHeight) / quarterHeight);
     const minutes = quarter * 15;
     console.log(`Clicked: Day ${dayCol}, Time ${hour}:${minutes.toString().padStart(2, '0')}`);
-    createEventAtPosition(x, y, dayCol, hour, minutes);
+    createEventAtPosition(dayCol, hour, minutes);
     const clickedDate = getDateFromDayColumn(dayCol);
     openModalWithDateTime(clickedDate, hour, minutes);
 }
@@ -408,7 +409,7 @@ function openModalWithDateTime(date, hour, minutes) {
     }
     console.log(`Modal opened with date: ${dateString}, start time: ${timeString}, end time: ${endTimeString}`);
 }
-function goToPreviousWeek() {
+async function goToPreviousWeek() {
     currentWeekReference.setDate(currentWeekReference.getDate() - 7);
     updateHeaderDate();
     const bigCalender = document.querySelector('.big-calender');
@@ -420,7 +421,7 @@ function goToPreviousWeek() {
     }
     createCalenderGrid();
 }
-function goToNextWeek() {
+async function goToNextWeek() {
     currentWeekReference.setDate(currentWeekReference.getDate() + 7);
     updateHeaderDate();
     const bigCalender = document.querySelector('.big-calender');
@@ -469,8 +470,6 @@ function initializeDateTimeSelects(clickedDate) {
         const today = new Date();
         dateSelect.value = today.toISOString().split('T')[0];
     }
-    // startTimeSelect.value = '09:00';
-    // endTimeSelect.value = '10:00';
 }
 function populateDateOptions(dateSelect, targetDateString) {
     dateSelect.innerHTML = '';
@@ -485,7 +484,7 @@ function populateDateOptions(dateSelect, targetDateString) {
     }
     for (let i = 0; i < 60; i++) {
         const date = new Date(startDate);
-        date.setDate(today.getDate() + i);
+        date.setDate(startDate.getDate() + i);
         const option = document.createElement('option');
         option.value = date.toISOString().split('T')[0];
         option.textContent = formatDateForDisplay(date);
@@ -524,9 +523,9 @@ function populateAllTimeOptions(timeSelect) {
 }
 const saveButton = document.querySelector('.form-save-button');
 if (saveButton && modal) {
-    saveButton.addEventListener('click', () => {
+    saveButton.addEventListener('click', async () => {
         if (validateForm()) {
-            saveEvent();
+            await saveEvent();
             modal.style.display = 'none';
             document.querySelectorAll('.selected').forEach(event => {
                 event.remove();
@@ -561,12 +560,68 @@ function validateForm() {
     }
     return true;
 }
-function saveEventsToLocalStorage(events) {
-    localStorage.setItem('calendarEvents', JSON.stringify(events));
+async function getAllEventsFromAPI() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/events`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch events');
+        }
+        return await response.json();
+    }
+    catch (error) {
+        console.error('Error fetching events:', error);
+        return [];
+    }
 }
-function loadEventsFromLocalStorage() {
-    const eventsJson = localStorage.getItem('calendarEvents');
-    return eventsJson ? JSON.parse(eventsJson) : [];
+async function saveEventToAPI(event) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/events`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(event)
+        });
+        if (!response.ok) {
+            throw new Error('Failed to save event');
+        }
+        return await response.json();
+    }
+    catch (error) {
+        console.error('Error saving event:', error);
+        return null;
+    }
+}
+async function updateEventInAPI(id, event) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/events/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(event)
+        });
+        if (!response.ok) {
+            throw new Error('Failed to update event');
+        }
+        return await response.json();
+    }
+    catch (error) {
+        console.error('Error updating event:', error);
+        return null;
+    }
+}
+async function deleteEventFromAPI(id) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/events/${id}`, {
+            method: 'DELETE',
+        });
+        return response.ok;
+    }
+    catch (error) {
+        console.error('Error deleting event:', error);
+        return false;
+    }
 }
 function createEventObject(title, date, startTime, endTime, description) {
     return {
@@ -577,7 +632,7 @@ function createEventObject(title, date, startTime, endTime, description) {
         description: description
     };
 }
-function saveEvent() {
+async function saveEvent() {
     const formTitle = document.querySelector('.title');
     const eventDate = document.getElementById('eventDate');
     const startTime = document.getElementById('eventStartTime');
@@ -587,13 +642,14 @@ function saveEvent() {
         return;
     }
     const newEvent = createEventObject(formTitle.value.trim(), eventDate.value, startTime.value, endTime.value, description.value.trim());
-    const existingEvents = loadEventsFromLocalStorage();
-    existingEvents.push(newEvent);
-    saveEventsToLocalStorage(existingEvents);
-    clearForm();
-    displayEventsOnCalendar();
-    console.log('Event saved:', newEvent);
-    console.log('All events:', existingEvents);
+    const savedEvent = await saveEventToAPI(newEvent);
+    if (savedEvent) {
+        clearForm();
+        await displayEventsOnCalendar();
+    }
+    else {
+        console.error("failed to save event");
+    }
 }
 function clearForm() {
     const title = document.querySelector('.title');
@@ -605,10 +661,10 @@ function clearForm() {
         description.value = '';
     }
 }
-function getAllEvents() {
-    return loadEventsFromLocalStorage();
+async function getAllEvents() {
+    return await getAllEventsFromAPI();
 }
-function createEventAtPosition(x, y, dayCol, hour, minutes) {
+function createEventAtPosition(dayCol, hour, minutes) {
     document.querySelectorAll('.selected').forEach(event => {
         event.remove();
     });
@@ -641,8 +697,8 @@ function getWeekDateRange(referenceDate) {
         end: endOfWeek
     };
 }
-function getEventsForCurrentWeek() {
-    const allEvents = loadEventsFromLocalStorage();
+async function getEventsForCurrentWeek() {
+    const allEvents = await getAllEventsFromAPI();
     const weekRange = getWeekDateRange(currentWeekReference);
     return allEvents.filter((event) => {
         const eventDate = new Date(event.date);
@@ -662,11 +718,11 @@ function timeStringToPosition(timeString) {
     const [hours, minutes] = timeString.split(':').map(Number);
     return hours + (minutes / 60);
 }
-function displayEventsOnCalendar() {
+async function displayEventsOnCalendar() {
     document.querySelectorAll('.calendar-event').forEach(event => {
         event.remove();
     });
-    const weekEvents = getEventsForCurrentWeek();
+    const weekEvents = await getEventsForCurrentWeek();
     const overlay = document.querySelector('.overlay');
     if (!overlay)
         return;

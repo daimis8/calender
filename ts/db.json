@@ -1,0 +1,36 @@
+{
+  "events": [
+    {
+      "id": 1,
+      "title": "Team Meeting",
+      "date": "2025-07-15",
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "description": "Weekly team standup meeting"
+    },
+    {
+      "id": 2,
+      "title": "Project Deadline",
+      "date": "2025-07-14",
+      "startTime": "16:00",
+      "endTime": "18:00",
+      "description": "Submit final project deliverables"
+    },
+    {
+      "id": 3,
+      "title": "Lunch with Client",
+      "date": "2025-07-17",
+      "startTime": "12:00",
+      "endTime": "13:30",
+      "description": "Business lunch discussion"
+    },
+    {
+      "title": "test",
+      "date": "2025-07-07",
+      "startTime": "05:00",
+      "endTime": "05:30",
+      "description": "",
+      "id": 4
+    }
+  ]
+}

@@ -1,3 +1,12 @@
+interface EventInfo {
+    id?: number,
+    title: string;
+    date: string;
+    startTime: string;
+    endTime: string;
+    description?: string;
+}
+
 interface CalenderInfo {
     year: number;
     month: number;
@@ -41,6 +50,10 @@ enum DayName {
     FRIDAY = 'Friday',
     SATURDAY = 'Saturday'
 }
+
+const API_BASE_URL = 'http://localhost:3001';
+
+
 
 const now = new Date();
 const currentMonth = now.getMonth();
@@ -445,7 +458,7 @@ function createCalenderGrid() {
 
 }
 
-function createOverlayGrid() {
+async function createOverlayGrid() {
 
     const bigCalender = document.querySelector('.big-calender');
 
@@ -468,7 +481,7 @@ function createOverlayGrid() {
     
     bigCalender.appendChild(overlayGrid);
 
-    displayEventsOnCalendar();
+    await displayEventsOnCalendar();
 
     
 }
@@ -492,7 +505,7 @@ function handleCalendarClick(event: MouseEvent ) {
     
     console.log(`Clicked: Day ${dayCol}, Time ${hour}:${minutes.toString().padStart(2, '0')}`);
 
-    createEventAtPosition(x, y, dayCol, hour, minutes);
+    createEventAtPosition(dayCol, hour, minutes);
 
     const clickedDate = getDateFromDayColumn(dayCol);
 
@@ -552,7 +565,7 @@ function openModalWithDateTime(date: Date, hour: number, minutes: number) {
     console.log(`Modal opened with date: ${dateString}, start time: ${timeString}, end time: ${endTimeString}`);
 }
 
-function goToPreviousWeek() {
+async function goToPreviousWeek() {
     currentWeekReference.setDate(currentWeekReference.getDate() - 7);
 
     updateHeaderDate();
@@ -569,7 +582,7 @@ function goToPreviousWeek() {
     createCalenderGrid();
 }
 
-function goToNextWeek() {
+async function goToNextWeek() {
     currentWeekReference.setDate(currentWeekReference.getDate() + 7);
 
     updateHeaderDate();
@@ -631,9 +644,7 @@ function initializeDateTimeSelects(clickedDate?: string) {
         const today = new Date();
         dateSelect.value = today.toISOString().split('T')[0];
     }
-    
-    // startTimeSelect.value = '09:00';
-    // endTimeSelect.value = '10:00';
+
 }
 
 function populateDateOptions(dateSelect: HTMLSelectElement, targetDateString?: string) {
@@ -652,7 +663,7 @@ function populateDateOptions(dateSelect: HTMLSelectElement, targetDateString?: s
     
     for (let i = 0; i < 60; i++) {
         const date = new Date(startDate);
-        date.setDate(today.getDate() + i);
+        date.setDate(startDate.getDate() + i);
         
         const option = document.createElement('option');
         option.value = date.toISOString().split('T')[0]; 
@@ -700,9 +711,9 @@ function populateAllTimeOptions(timeSelect: HTMLSelectElement) {
 const saveButton = document.querySelector('.form-save-button');
 
 if (saveButton && modal) {
-    saveButton.addEventListener('click', () => {
+    saveButton.addEventListener('click', async () => {
         if (validateForm()) {
-            saveEvent();
+            await saveEvent();
             modal.style.display = 'none';
     
             document.querySelectorAll('.selected').forEach(event => {
@@ -749,21 +760,67 @@ function validateForm() {
     return true
 }
 
-function saveEventsToLocalStorage(events: EventInfo[]) {
-    localStorage.setItem('calendarEvents', JSON.stringify(events));
+async function getAllEventsFromAPI(): Promise<EventInfo[]> {
+    try {
+        const response = await fetch(`${API_BASE_URL}/events`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch events');
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching events:', error);
+        return [];
+    }
 }
 
-function loadEventsFromLocalStorage() {
-    const eventsJson = localStorage.getItem('calendarEvents');
-    return eventsJson ? JSON.parse(eventsJson) : [];
+async function saveEventToAPI(event: EventInfo): Promise<EventInfo | null> {
+    try {
+        const response = await fetch(`${API_BASE_URL}/events`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(event)
+        });
+        if (!response.ok) {
+            throw new Error('Failed to save event');
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Error saving event:', error);
+        return null;
+    }
 }
 
-interface EventInfo {
-    title: string;
-    date: string;
-    startTime: string;
-    endTime: string;
-    description?: string;
+async function updateEventInAPI(id: number, event: EventInfo): Promise<EventInfo | null> {
+    try {
+        const response = await fetch(`${API_BASE_URL}/events/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(event)
+        });
+        if (!response.ok) {
+            throw new Error('Failed to update event');
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Error updating event:', error);
+        return null;
+    }
+}
+
+async function deleteEventFromAPI(id: number): Promise<boolean> {
+    try {
+        const response = await fetch(`${API_BASE_URL}/events/${id}`, {
+            method: 'DELETE',
+        });
+        return response.ok;
+    } catch (error) {
+        console.error('Error deleting event:', error);
+        return false;
+    }
 }
 
 function createEventObject(title: string, date: string, startTime: string, endTime: string, description?: string): EventInfo{
@@ -776,7 +833,7 @@ function createEventObject(title: string, date: string, startTime: string, endTi
     };
 }
 
-function saveEvent() {
+async function saveEvent() {
     const formTitle = document.querySelector('.title') as HTMLInputElement;
     const eventDate = document.getElementById('eventDate') as HTMLSelectElement;
     const startTime = document.getElementById('eventStartTime') as HTMLSelectElement;
@@ -795,19 +852,14 @@ function saveEvent() {
         description.value.trim()
     );
 
-    const existingEvents = loadEventsFromLocalStorage();
+    const savedEvent = await saveEventToAPI(newEvent);
 
-
-    existingEvents.push(newEvent);
-    
-    saveEventsToLocalStorage(existingEvents);
-    
-    clearForm();
-
-    displayEventsOnCalendar();
-    
-    console.log('Event saved:', newEvent);
-    console.log('All events:', existingEvents);
+    if (savedEvent) {
+        clearForm();
+        await displayEventsOnCalendar();
+    } else {
+        console.error("failed to save event")
+    }
 }
 
 function clearForm() {
@@ -822,11 +874,11 @@ function clearForm() {
     }
 }
 
-function getAllEvents() {
-    return loadEventsFromLocalStorage();
+async function getAllEvents() {
+    return await getAllEventsFromAPI();
 }
 
-function createEventAtPosition(x: number, y: number, dayCol: number, hour: number, minutes: number) {
+function createEventAtPosition(dayCol: number, hour: number, minutes: number) {
 
     document.querySelectorAll('.selected').forEach(event => {
         event.remove();
@@ -867,8 +919,8 @@ function getWeekDateRange(referenceDate: Date) {
     };
 }
 
-function getEventsForCurrentWeek() {
-    const allEvents = loadEventsFromLocalStorage();
+async function getEventsForCurrentWeek() {
+    const allEvents = await getAllEventsFromAPI();
     const weekRange = getWeekDateRange(currentWeekReference);
     
     return allEvents.filter((event : EventInfo) => {
@@ -894,13 +946,13 @@ function timeStringToPosition(timeString: string) {
     return hours + (minutes / 60);
 }
 
-function displayEventsOnCalendar() {
+async function displayEventsOnCalendar() {
     
     document.querySelectorAll('.calendar-event').forEach(event => {
         event.remove();
     });
     
-    const weekEvents = getEventsForCurrentWeek();
+    const weekEvents = await getEventsForCurrentWeek();
     const overlay = document.querySelector('.overlay');
     
     if (!overlay) return;
