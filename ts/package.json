@@ -1,0 +1,13 @@
+{
+  "scripts": {
+    "build": "tsc",
+    "check": "tsc --noEmit",
+    "watch": "tsc --watch",
+    "server": "node node_modules/json-server/lib/cli/bin.js --watch db.json --port 3001 --host 0.0.0.0",
+    "test-server": "json-server --watch db.json --port 3001 --host 0.0.0.0"
+  },
+  "devDependencies": {
+    "json-server": "^0.17.4",
+    "typescript": "^5.8.3"
+  }
+}

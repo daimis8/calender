@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="./styles/style.css" />
+  </head>
+  <body>
+    <header class="header-container row">
+      <div class="icon-and-logo-container">
+        <!--ICON AND LOGO -->
+        <div class="main-icon-container cursor-pointer">
+          <img
+            src="../assets/icons/menuIcon.svg"
+            alt="Menu icon"
+            class="menu-icon"
+          />
+        </div>
+
+        <img
+          src="../assets/images/Logo.png"
+          alt="Calender logo"
+          height="30"
+          width="34"
+        />
+
+        <p class="logo-text">Calendar</p>
+      </div>
+
+      <div class="header-second-part row">
+        <!--TODAY   < >     DATE                WEEK/MONTH-->
+        <div class="after-logo-first-part row">
+          <button class="button-header">
+            <!--TODAY-->
+            Today
+          </button>
+
+          <div class="arrows-container row">
+            <!--ARROWS-->
+            <div class="arrow-container-big cursor-pointer left-header-arrow">
+              <img
+                src="../assets/icons/arrowLeft.svg"
+                alt="Arrow left icon"
+                class="arrow-big"
+              />
+            </div>
+
+            <div class="arrow-container-big cursor-pointer right-header-arrow">
+              <img
+                src="../assets/icons/arrowRight.svg"
+                alt="Arrow right icon"
+                class="arrow-big"
+              />
+            </div>
+          </div>
+          <p class="header-date-text"></p>
+        </div>
+
+        <button class="button-header row">
+          Week
+          <img
+            src="../assets/icons/triangleDown.svg"
+            alt="Dropdown icon"
+            class="dropdown-triangle"
+          />
+        </button>
+      </div>
+    </header>
+    <main class="main-container">
+      <aside>
+        <button class="create-button row cursor-pointer">
+          <!--    + Create  -->
+          <img src="../assets/icons/plus.svg" alt="plus icon" />
+          Create
+        </button>
+        <div>
+          
+          <div class="small-calender-header row">
+            <!--header of calender June 2025                <   >       -->
+            <p class="aside-calender-month-year"></p>
+            <div class="row">
+              <div class="arrow-container-small cursor-pointer small-calender-left-arrow">
+                <img
+                  src="../assets/icons/arrowLeft.svg"
+                  alt="Arrow left icon"
+                  class="arrow-small"
+                />
+              </div>
+              <div class="arrow-container-small cursor-pointer small-calender-right-arrow">
+                <img
+                  src="../assets/icons/arrowRight.svg"
+                  alt="Arrow right icon"
+                  class="arrow-small"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="small-calender-grid">
+            
+            <div class="small-calender-grid-weekday">S</div>
+            <div class="small-calender-grid-weekday">M</div>
+            <div class="small-calender-grid-weekday">T</div>
+            <div class="small-calender-grid-weekday">W</div>
+            <div class="small-calender-grid-weekday">T</div>
+            <div class="small-calender-grid-weekday">F</div>
+            <div class="small-calender-grid-weekday">S</div>
+          
+          </div>
+        
+        </div>
+      </aside>
+      <div class="big-calender">
+
+      </div>
+    </main>
+
+    <div class="modal-overlay">
+      <div class="modal-container">
+        <!--close icon justify end-->
+        <div class="top-bar-container">
+            <div class="close-icon-container cursor-pointer">
+                <img src="../assets/icons/close.svg" alt="Close icon" class="close-icon">
+            </div>
+        </div>
+        <!--FORM-->
+        <form class="form-container">
+            <!--TITLE-->
+            <input type="text" placeholder="Add title" class="cursor-pointer title">
+
+            <!--TIME-->
+            <div class="date-choice-container">
+                <select id="eventDate" class="cursor-pointer event-date">
+
+                </select>
+
+                <select id="eventStartTime" class="cursor-pointer event-time-selector"> 
+
+                </select>
+
+                <p class="time-from-to-symbol">-</p>
+
+                <select id="eventEndTime" class="cursor-pointer event-time-selector"> 
+
+                </select>
+            </div>
+            <textarea name="description" placeholder="Add description" rows="4" class="form-description cursor-pointer"></textarea>
+            <button type="button" class="form-save-button cursor-pointer">Save</button>
+        </form>
+      
+      
+        </div>
+    </div>
+
+    <script src="../dist/script/main.js"></script>
+  </body>
+</html>
